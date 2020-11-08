@@ -7,11 +7,13 @@ import time
 
 from logger import Logger
 
+LOGLEVEL = getattr(logging, os.environ.get('LOGLEVEL', 'INFO'), logging.INFO)
+
 
 def handle_process_restart_behavior(process, behavior, returncodes, callback):
     process.wait()
 
-    Logger(level=logging.DEBUG).debug((
+    Logger(level=LOGLEVEL).debug((
         f'Process {process.pid} ({process.args}) exited,'
         f' with returncode {process.returncode}.'
         f' Expected returncodes: {returncodes}. Policy: autorestart {behavior}.'
@@ -30,7 +32,7 @@ def handle_process_restart_behavior(process, behavior, returncodes, callback):
 
 class Task:
     def __init__(self, *args, **kwargs):
-        self.log = Logger(level=logging.INFO)
+        self.log = Logger(level=LOGLEVEL)
 
         self.processes = list()
         self.start_time = -1

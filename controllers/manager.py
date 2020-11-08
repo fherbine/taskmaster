@@ -1,8 +1,11 @@
 import logging
+import os
 import sys
 
 from logger import Logger
 from task import Task
+
+LOGLEVEL = getattr(logging, os.environ.get('LOGLEVEL', 'INFO'), logging.INFO)
 
 
 class Manager:
@@ -12,7 +15,7 @@ class Manager:
         self.programs = programs
         self.parser = parser
 
-        self.log = Logger(level=logging.INFO)
+        self.log = Logger(level=LOGLEVEL)
 
     def stop_all(self):
         for program in self.programs:

@@ -28,7 +28,7 @@ class Logger:
         print(self.prefix, end='')
         if level:
             print(color + (Termcolors.BOLD if bold else '') + '[%s] ' % level.upper() + Termcolors.REGULAR, end='')
-        print(msg)
+        print(msg, **kw)
     
     def info(self, msg, **kwargs):
         if self.level > logging.INFO:
