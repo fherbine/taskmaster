@@ -34,7 +34,12 @@ class Manager:
                 return response if len(response) > 1 else response[0]
         
         if command.upper() == 'REFRESH':
-            return [{"task": program.name, "uptime": program.uptime} for program in self.programs]
+            return [{
+                "task": program.name,
+                "uptime": program.uptime,
+                "started_processes": len(program.processes),
+                "pids": [p.pid for p in program.processes],
+            } for program in self.programs]
         
         return {
             'raw_output': '%s: ERROR (no such command)' % command,
