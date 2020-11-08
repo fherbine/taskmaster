@@ -1,4 +1,5 @@
 import os
+import signal
 import json
 
 from waitress import serve
@@ -25,7 +26,7 @@ class Server:
         try:
             ret = self.manager.load_tcp_command(data)
         except:
-            os.system('fuser -k 9998/tcp')
+            os.kill(os.getpid(), signal.SIGKILL)
         return [json.dumps(ret).encode()]
 
 
