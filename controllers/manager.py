@@ -12,6 +12,7 @@ class Manager:
     def load_tcp_command(self, request):
         command = request.get('command', '')
         args = request.get('args', list())
+        with_refresh = request.get('with_refresh', False)
         response = []
         
         for program in self.programs:
@@ -30,10 +31,10 @@ class Manager:
                         ret['message'],
                     ), **ret))
 
-            if response:
+            if response and not with_refresh:
                 return response if len(response) > 1 else response[0]
         
-        if command.upper() == 'REFRESH':
+        if command.upper() == 'REFRESH' or with_refresh:
             return [{
                 "task": program.name,
                 "uptime": program.uptime,
