@@ -3,8 +3,10 @@ import os
 import sys
 
 import yaml
-from yaml import CLoader as Loader
-
+try:
+    from yaml import CLoader as Loader
+except:
+    from yaml import Loader as Loader
 
 class TaskmasterDaemonParser:
     """TaskmasterDeamonParser class.
