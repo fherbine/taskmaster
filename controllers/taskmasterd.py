@@ -1,3 +1,4 @@
+import copy
 import signal
 import sys
 
@@ -17,11 +18,12 @@ if __name__ == '__main__':
     #signal.signal(signal.SIGINT, lambda *_: stop_all())
 
     for program_name, program_params in parser.configuration.get('programs', {}).items():
-        cmd = program_params.pop('cmd')
-        task = Task(program_name, cmd, **program_params)
+        params = copy.deepcopy(program_params)
+        cmd = params.pop('cmd')
+        task = Task(program_name, cmd, **params)
         programs.append(task)
 
-    manager = Manager(programs)
+    manager = Manager(programs, parser)
     server = Server(manager)
     server.serve()
 

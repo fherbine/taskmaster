@@ -29,7 +29,22 @@ def handle_process_restart_behavior(process, behavior, returncodes, callback):
 
 
 class Task:
-    def __init__(self, name, cmd, numprocs=1, umask=666, workingdir=os.getcwd(), 
+    def __init__(self, *args, **kwargs):
+        self.log = Logger(level=logging.INFO)
+
+        self.processes = list()
+        self.start_time = -1
+        self.stdout = ''
+        self.stderr = ''
+        self.trynum = 1
+        self.threads = list()
+        self.stopping = False
+
+        self.update(*args, **kwargs)
+        
+        self.log.info('task %s initialized.' % self.name)
+
+    def update(self, name, cmd, numprocs=1, umask=666, workingdir=os.getcwd(), 
                  autostart=True, autorestart='unexpected', exitcodes=[0],
                  startretries=2, starttime=5, stopsignal='TERM', stoptime=10,
                  env={}, **kwargs):
@@ -46,15 +61,6 @@ class Task:
         self.stopsignal = stopsignal
         self.stoptime = stoptime
         self.env = os.environ
-
-        self.processes = list()
-        self.start_time = -1
-        self.stdout = ''
-        self.stderr = ''
-        self.trynum = 1
-        self.threads = list()
-
-        self.log = Logger(level=logging.INFO)
         
         for key, value in env.items():
             self.env[key] = value
@@ -64,16 +70,20 @@ class Task:
 
         if 'stderr' in kwargs:
             self.stderr = kwargs['stderr']
-
-        self.log.info('task %s initialized.' % self.name)
         
         if autostart:
-            self.run()
+            if self.is_running:
+                self.restart()
+            else:
+                self.run()
     
     def _initchildproc(self):
         os.umask(self.umask)
 
     def restart(self, retry=False, from_thread=False):
+        if from_thread and self.stopping:
+            return
+        
         self.stop(from_thread)
         self.run(retry=retry)
 
@@ -154,6 +164,8 @@ class Task:
             self.restart(retry=True)
     
     def stop(self, from_thread=False):
+        self.stopping = True
+
         for process in self.processes:
             self.log.info(f'Send SIG{self.stopsignal} to {process.pid}.')
             process.send_signal(getattr(signal, 'SIG' + self.stopsignal))
@@ -171,6 +183,11 @@ class Task:
         self.processes = list()
         self.threads = list()
         self.start_time = -3
+        self.stopping = False
+
+    @property
+    def is_running(self):
+        return self.start_time > 0
 
     @property
     def uptime(self):

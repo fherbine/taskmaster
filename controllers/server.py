@@ -26,6 +26,8 @@ class Server:
         try:
             ret = self.manager.load_tcp_command(data)
         except:
+            raise
+            #XXX: Hack
             os.kill(os.getpid(), signal.SIGKILL)
         return [json.dumps(ret).encode()]
 
