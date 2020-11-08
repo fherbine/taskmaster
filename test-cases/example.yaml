@@ -1,4 +1,7 @@
 programs:
 
-  nginx:
+  ls_root:
     cmd: "ls -R /"
+
+  yesssai:
+    cmd: "yes"

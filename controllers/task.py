@@ -5,7 +5,7 @@ import time
 
 class Task:
     pid = 0
-    uptime = '-1'
+    start_time = '-1'
     processes = list()
     stdout = ''
     stderr = ''
@@ -54,8 +54,8 @@ class Task:
                     env=self.env,
                     cwd=self.workingdir,
                     preexec_fn=self._initchildproc,
+                    shell=True,
                 )
-                print(process.pid)
                 self.processes.append(process)
                 self.start_time = time.time()
         except:
