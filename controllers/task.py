@@ -64,8 +64,22 @@ class Task:
                 )
                 self.processes.append(process)
                 self.start_time = time.time()
+
+                if process.returncode in self.exitcodes:
+                    continue
+                else:
+                    try:
+                        process.wait(timeout=self.starttime)
+                    except subprocess.TimeoutExpired:
+                        continue
+
+                    # retry
+                    self.stop()
+                    self.run(retry=True)
         except:
-            raise
+            # retry
+            self.stop()
+            self.run(retry=True)
     
     def stop(self):
         for process in self.processes:
