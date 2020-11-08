@@ -11,7 +11,7 @@ from logger import Logger
 def handle_process_restart_behavior(process, behavior, returncodes, callback):
     process.wait()
 
-    Logger(level=logging.INFO).info((
+    Logger(level=logging.DEBUG).debug((
         f'Process {process.pid} ({process.args}) exited,'
         f' with returncode {process.returncode}.'
         f' Expected returncodes: {returncodes}. Policy: autorestart {behavior}.'
@@ -25,19 +25,10 @@ def handle_process_restart_behavior(process, behavior, returncodes, callback):
             callback()
         except:
             #XXX: Hack
-            pass
+            return
 
 
 class Task:
-    pid = 0
-    start_time = '-1'
-    processes = list()
-    stdout = ''
-    stderr = ''
-    start_time = -1
-    trynum = 1
-    threads = list()
-
     def __init__(self, name, cmd, numprocs=1, umask=666, workingdir=os.getcwd(), 
                  autostart=True, autorestart='unexpected', exitcodes=[0],
                  startretries=2, starttime=5, stopsignal='TERM', stoptime=10,
@@ -55,6 +46,13 @@ class Task:
         self.stopsignal = stopsignal
         self.stoptime = stoptime
         self.env = os.environ
+
+        self.processes = list()
+        self.start_time = -1
+        self.stdout = ''
+        self.stderr = ''
+        self.trynum = 1
+        self.threads = list()
 
         self.log = Logger(level=logging.INFO)
         

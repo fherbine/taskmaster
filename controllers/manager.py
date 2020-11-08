@@ -6,7 +6,8 @@ class Manager:
 
     def stop_all(self):
         for program in self.programs:
-            program.stop()
+            for thr in program.threads:
+                thr.join(.1)
 
     def load_tcp_command(self, request):
         command = request.get('command', '')
