@@ -13,10 +13,17 @@ class Server:
         except (ValueError):
             request_body_size = 0
 
-        start_response('200 OK', [('Content-Type','application/json')])
+        start_response('200 OK', [
+            ('Content-Type','application/json'),
+            ('Access-Control-Allow-Origin', '*'),
+            ('Access-Control-Allow-Methods', 'GET, POST, PATCH, PUT, DELETE, OPTIONS'),
+            ('Access-Control-Allow-Headers', 'Origin, Content-Type, X-Auth-Token')])
 
         request_body = environ['wsgi.input'].read(request_body_size)
+        print(request_body);
+        print(environ)
         data = json.loads(request_body)
+        print(data)
         ret = self.manager.load_tcp_command(data)
         return [json.dumps(ret).encode()]
 
