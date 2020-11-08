@@ -1,3 +1,6 @@
+import sys
+
+
 class Manager:
     programs = list()
 
@@ -41,6 +44,10 @@ class Manager:
                 "started_processes": len(program.processes),
                 "pids": [p.pid for p in program.processes],
             } for program in self.programs]
+        
+        if command.upper() == 'STOP_DAEMON' or with_refresh:
+            self.stop_all()
+            sys.exit(0)
         
         return {
             'raw_output': '%s: ERROR (no such command)' % command,

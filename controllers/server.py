@@ -1,3 +1,4 @@
+import os
 import json
 
 from waitress import serve
@@ -20,11 +21,11 @@ class Server:
             ('Access-Control-Allow-Headers', 'Origin, Content-Type, X-Auth-Token')])
 
         request_body = environ['wsgi.input'].read(request_body_size)
-        print(request_body);
-        print(environ)
         data = json.loads(request_body)
-        print(data)
-        ret = self.manager.load_tcp_command(data)
+        try:
+            ret = self.manager.load_tcp_command(data)
+        except:
+            os.system('fuser -k 9998/tcp')
         return [json.dumps(ret).encode()]
 
 
