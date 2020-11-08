@@ -170,6 +170,7 @@ class Task:
 
         self.processes = list()
         self.threads = list()
+        self.start_time = -3
 
     @property
     def uptime(self):
@@ -177,6 +178,8 @@ class Task:
             return 'not started'
         if self.start_time == -2:
             return 'finished'
+        if self.start_time == -3:
+            return 'stopped'
         upt = int(time.time() - self.start_time)
         return '{}:{}:{}'.format(int(upt / 3600), int(upt / 60 % 60), int(upt % 60))
     

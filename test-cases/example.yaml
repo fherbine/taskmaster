@@ -11,3 +11,6 @@ programs:
 
   yesssai:
     cmd: "yes"
+    exitcodes:
+      - 0
+      - -15

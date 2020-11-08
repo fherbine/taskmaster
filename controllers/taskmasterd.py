@@ -24,4 +24,5 @@ if __name__ == '__main__':
     manager = Manager(programs)
     server = Server(manager)
     server.serve()
+
     manager.stop_all()
