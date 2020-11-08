@@ -65,6 +65,11 @@ class Task:
         for process in self.processes:
             process.send_signal(getattr(signal, 'SIG' + self.stopsignal))
 
+            try:
+                process.wait(self.stoptime)
+            except subprocess.TimeoutExpired:
+                process.kill()
+
     @property
     def uptime(self):
         if not self.start_time:
