@@ -1,7 +1,32 @@
+import logging
 import os
 import signal
 import subprocess
+import threading
 import time
+
+from logger import Logger
+
+
+def handle_process_restart_behavior(process, behavior, returncodes, callback):
+    process.wait()
+
+    Logger(level=logging.INFO).info((
+        f'Process {process.pid} ({process.args}) exited,'
+        f' with returncode {process.returncode}.'
+        f' Expected returncodes: {returncodes}. Policy: autorestart {behavior}.'
+    ))
+
+    if behavior.upper() == 'ALWAYS' or (
+        behavior.upper() == 'UNEXPECTED'
+        and process.returncode not in returncodes
+    ):
+        try:
+            callback()
+        except:
+            #XXX: Hack
+            pass
+
 
 class Task:
     pid = 0
@@ -11,6 +36,7 @@ class Task:
     stderr = ''
     start_time = -1
     trynum = 1
+    threads = list()
 
     def __init__(self, name, cmd, numprocs=1, umask=666, workingdir=os.getcwd(), 
                  autostart=True, autorestart='unexpected', exitcodes=[0],
@@ -29,6 +55,8 @@ class Task:
         self.stopsignal = stopsignal
         self.stoptime = stoptime
         self.env = os.environ
+
+        self.log = Logger(level=logging.INFO)
         
         for key, value in env.items():
             self.env[key] = value
@@ -38,6 +66,8 @@ class Task:
 
         if 'stderr' in kwargs:
             self.stderr = kwargs['stderr']
+
+        self.log.info('task %s initialized.' % self.name)
         
         if autostart:
             self.run()
@@ -45,14 +75,40 @@ class Task:
     def _initchildproc(self):
         os.umask(self.umask)
 
+    def restart(self, retry=False, from_thread=False):
+        self.stop(from_thread)
+        self.run(retry=retry)
+
+    def define_restart_policy(self, process):
+        thr = threading.Thread(
+            target=handle_process_restart_behavior,
+            args=(
+                process,
+                self.autorestart,
+                self.exitcodes,
+                lambda *_: self.restart(retry=True, from_thread=True),
+            ),
+            daemon=True,
+        )
+        thr.start()
+        self.threads.append(thr)
+
     def run(self, retry=False):
         self.trynum = 1 if not retry else (self.trynum + 1)
 
         if self.trynum > self.startretries:
+            self.log.warning('%s reached the maximum number of retries.' % self.name)
             return
+        
+        self.log.info('Try to start {}. Retry attempt {}, max retries: {}, cmd: `{}`'.format(
+            self.name,
+            self.trynum,
+            self.startretries,
+            self.cmd,
+        ))
 
         try:
-            for _ in range(self.numprocs):
+            for virtual_pid in range(self.numprocs):
                 process = subprocess.Popen(
                     self.cmd.split(),
                     stderr=self.stderr if self.stderr else subprocess.PIPE,
@@ -60,44 +116,74 @@ class Task:
                     env=self.env,
                     cwd=self.workingdir,
                     preexec_fn=self._initchildproc,
-                    shell=True,
                 )
                 self.processes.append(process)
                 self.start_time = time.time()
 
                 if process.returncode in self.exitcodes:
+                    self.define_restart_policy(process)
+                    self.log.success((
+                        f'{self.name}: process number {virtual_pid} started.'
+                        f' Exited directly, with returncode {process.returncode}'
+                    ))
+                    self.start_time = -2
+                    self.trynum = 1
                     continue
                 else:
                     try:
                         process.wait(timeout=self.starttime)
+
+                        if process.returncode in self.exitcodes:
+                            self.define_restart_policy(process)
+                            self.log.success((
+                                f'{self.name}: process number {virtual_pid} started.'
+                                f' Exited directly, with returncode {process.returncode}'
+                            ))
+                            self.start_time = -2
+                            self.trynum = 1
+                            continue
                     except subprocess.TimeoutExpired:
+                        self.define_restart_policy(process)
+                        self.log.success(f'{self.name}: process number {virtual_pid} started.')
+                        self.trynum = 1
                         continue
 
                     # retry
-                    self.stop()
-                    self.run(retry=True)
+                    self.restart(retry=True)
         except:
             # retry
-            self.stop()
-            self.run(retry=True)
+            self.log.warning('%s startup failed.' % self.name)
+            self.restart(retry=True)
     
-    def stop(self):
+    def stop(self, from_thread=False):
         for process in self.processes:
+            self.log.info(f'Send SIG{self.stopsignal} to {process.pid}.')
             process.send_signal(getattr(signal, 'SIG' + self.stopsignal))
 
             try:
                 process.wait(self.stoptime)
             except subprocess.TimeoutExpired:
+                self.log.info(f'Force kill {process.pid}.')
                 process.kill()
+
+        if not from_thread:
+            for thr in self.threads:
+                thr.join(.1)
+
+        self.processes = list()
+        self.threads = list()
 
     @property
     def uptime(self):
-        if not self.start_time:
-            return -1
+        if self.start_time == -1:
+            return 'not started'
+        if self.start_time == -2:
+            return 'finished'
         upt = int(time.time() - self.start_time)
         return '{}:{}:{}'.format(int(upt / 3600), int(upt / 60 % 60), int(upt % 60))
     
     def send_command(self, command):
+        self.log.info(f'task {self.name}, command received {command}.')
         if command.upper() == 'START':
             self.run()
         elif command.upper() == 'RESTART':

@@ -1,7 +1,13 @@
 programs:
 
+  ls:
+    cmd: "ls"
+    workingdir: /
+    numprocs: 3
+
   ls_root:
     cmd: "ls -R /"
+    workingdir: /
 
   yesssai:
     cmd: "yes"

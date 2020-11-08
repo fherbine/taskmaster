@@ -4,6 +4,10 @@ class Manager:
     def __init__(self, programs):
         self.programs = programs
 
+    def stop_all(self):
+        for program in self.programs:
+            program.stop()
+
     def load_tcp_command(self, request):
         command = request.get('command', '')
         args = request.get('args', list())
