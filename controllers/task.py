@@ -10,6 +10,7 @@ class Task:
     stdout = ''
     stderr = ''
     start_time = -1
+    trynum = 1
 
     def __init__(self, name, cmd, numprocs=1, umask=666, workingdir=os.getcwd(), 
                  autostart=True, autorestart='unexpected', exitcodes=[0],
@@ -44,7 +45,12 @@ class Task:
     def _initchildproc(self):
         os.umask(self.umask)
 
-    def run(self):
+    def run(self, retry=False):
+        self.trynum = 1 if not retry else (self.trynum + 1)
+
+        if self.trynum > self.startretries:
+            return
+
         try:
             for _ in range(self.numprocs):
                 process = subprocess.Popen(
