@@ -38,6 +38,13 @@ class Manager:
                 return response if len(response) > 1 else response[0]
         
         if command.upper() == 'REFRESH' or with_refresh:
+            if args:
+                return [{
+                    "task": program.name,
+                    "uptime": program.uptime,
+                    "started_processes": len(program.processes),
+                    "pids": [p.pid for p in program.processes],
+                } for program in self.programs if  program.name in args]
             return [{
                 "task": program.name,
                 "uptime": program.uptime,
