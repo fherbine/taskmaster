@@ -5,7 +5,7 @@ import subprocess
 import threading
 import time
 
-from logger import Logger
+from controllers.logger import Logger
 
 LOGLEVEL = getattr(logging, os.environ.get('LOGLEVEL', 'INFO'), logging.INFO)
 

@@ -3,14 +3,14 @@ import logging
 import os
 import sys
 
-from parser import (
+from controllers.parser import (
     ParseError,
     TaskmasterDaemonParser,
 )
-from task import Task
-from server import Server
-from manager import Manager
-from logger import Logger
+from controllers.task import Task
+from controllers.server import Server
+from controllers.manager import Manager
+from controllers.logger import Logger
 
 LOGLEVEL = getattr(logging, os.environ.get('LOGLEVEL', 'INFO'), logging.INFO)
 

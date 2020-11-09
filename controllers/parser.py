@@ -12,7 +12,7 @@ try:
 except ImportError:
     from yaml import Loader as Loader
 
-from logger import Logger
+from controllers.logger import Logger
 
 LOGLEVEL = getattr(logging, os.environ.get('LOGLEVEL', 'INFO'), logging.INFO)
 

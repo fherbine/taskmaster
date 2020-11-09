@@ -2,8 +2,8 @@ import logging
 import os
 import sys
 
-from logger import Logger
-from task import Task
+from controllers.logger import Logger
+from controllers.task import Task
 
 LOGLEVEL = getattr(logging, os.environ.get('LOGLEVEL', 'INFO'), logging.INFO)
 
