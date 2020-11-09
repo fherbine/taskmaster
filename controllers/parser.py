@@ -84,6 +84,8 @@ CONFIGURATION_MAPPING = {
     "env": {"expected_type": dict},
 }
 
+REQUIRED_PARAMS = ['cmd', ]
+
 
 class ParseError(Exception):
     pass
@@ -161,6 +163,11 @@ class TaskmasterDaemonParser:
         programs = self.configuration.get('programs', {})
 
         for program_name, parameters in programs.items():
+
+            for rparam in REQUIRED_PARAMS:
+                if rparam not in parameters:
+                    raise ParseError(f'{program_name}: Missing required parameter {rparam}')
+
             for parameter_key, pvalue in parameters.items():
 
                 if parameter_key not in CONFIGURATION_MAPPING:

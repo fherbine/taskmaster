@@ -84,11 +84,11 @@ _to be described_
 - [ ] CTLs upload command
 - [ ] CTLs stop deamon command
 
-- [ ] YAML parser
+- [x] YAML parser
     - [x] read YAML file from command line
     - [x] Error/undefined values/undefined behavior management
     - [x] Default values
-    - [ ] Required values
+    - [x] Required values
 - [ ] Deamon task management
     - [x] start/autostart tasks
     - [x] restart behaviors / policy
