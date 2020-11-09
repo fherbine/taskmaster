@@ -1,8 +1,12 @@
 import copy
 import logging
 import os
+import sys
 
-from parser import TaskmasterDaemonParser
+from parser import (
+    ParseError,
+    TaskmasterDaemonParser,
+)
 from task import Task
 from server import Server
 from manager import Manager
@@ -13,8 +17,15 @@ LOGLEVEL = getattr(logging, os.environ.get('LOGLEVEL', 'INFO'), logging.INFO)
 
 if __name__ == '__main__':
     logger = Logger(level=LOGLEVEL)
-    logger.info('Parsing input configuration...', end='')
-    parser = TaskmasterDaemonParser.from_command_line()
+
+    try:
+        logger.info('Parsing input configuration...', end='')
+        parser = TaskmasterDaemonParser.from_command_line()
+    except ParseError as e:
+        print("")
+        logger.error(e)
+        sys.exit(-1)
+
     logger.success('')
     logger.debug('Configuration retrieved: %s' % parser.configuration)
     programs = list()
