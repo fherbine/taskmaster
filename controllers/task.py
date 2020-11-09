@@ -25,8 +25,8 @@ def handle_process_restart_behavior(process, behavior, returncodes, callback):
     ):
         try:
             callback()
-        except:
-            #XXX: Hack
+        except Exception:
+            # XXX: Hack
             return
 
 
@@ -46,10 +46,10 @@ class Task:
         
         self.log.info('task %s initialized.' % self.name)
 
-    def update(self, name, cmd, numprocs=1, umask=666, workingdir=os.getcwd(), 
-                 autostart=True, autorestart='unexpected', exitcodes=[0],
-                 startretries=2, starttime=5, stopsignal='TERM', stoptime=10,
-                 env={}, **kwargs):
+    def update(self, name, cmd, numprocs=1, umask=666, workingdir=os.getcwd(),
+               autostart=True, autorestart='unexpected', exitcodes=[0],
+               startretries=2, starttime=5, stopsignal='TERM', stoptime=10,
+               env={}, **kwargs):
         self.name = name
         self.cmd = cmd
         self.numprocs = numprocs
@@ -160,7 +160,7 @@ class Task:
 
                     # retry
                     self.restart(retry=True)
-        except:
+        except Exception:
             # retry
             self.log.warning('%s startup failed.' % self.name)
             self.restart(retry=True)

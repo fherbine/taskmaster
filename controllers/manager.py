@@ -63,12 +63,12 @@ class Manager:
                 ret = program.send_command(command)
 
                 if 'error' in ret:
-                    response.append(dict(raw_output = '{}: ERROR ({})'.format(
+                    response.append(dict(raw_output='{}: ERROR ({})'.format(
                         ret['task'],
                         ret['message'],
                     ), **ret))
                 else:
-                    response.append(dict(raw_output = '{}: {}'.format(
+                    response.append(dict(raw_output='{}: {}'.format(
                         ret['task'],
                         ret['message'],
                     ), **ret))
@@ -89,7 +89,7 @@ class Manager:
                     "uptime": program.uptime,
                     "started_processes": len(program.processes),
                     "pids": [p.pid for p in program.processes],
-                } for program in self.programs if  program.name in args]
+                } for program in self.programs if program.name in args]
             return [{
                 "task": program.name,
                 "uptime": program.uptime,

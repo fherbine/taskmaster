@@ -1,8 +1,6 @@
 import copy
 import logging
 import os
-import signal
-import sys
 
 from parser import TaskmasterDaemonParser
 from task import Task

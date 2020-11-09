@@ -16,7 +16,7 @@ class Server:
             request_body_size = 0
 
         start_response('200 OK', [
-            ('Content-Type','application/json'),
+            ('Content-Type', 'application/json'),
             ('Access-Control-Allow-Origin', '*'),
             ('Access-Control-Allow-Methods', 'GET, POST, PATCH, PUT, DELETE, OPTIONS'),
             ('Access-Control-Allow-Headers', 'Origin, Content-Type, X-Auth-Token')])
@@ -25,12 +25,11 @@ class Server:
         data = json.loads(request_body)
         try:
             ret = self.manager.load_tcp_command(data)
-        except:
+        except Exception:
             raise
-            #XXX: Hack
+            # XXX: Hack
             os.kill(os.getpid(), signal.SIGKILL)
         return [json.dumps(ret).encode()]
-
 
     def serve(self):
         serve(self.application, listen='*:9998')

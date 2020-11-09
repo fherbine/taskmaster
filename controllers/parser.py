@@ -5,7 +5,7 @@ import sys
 import yaml
 try:
     from yaml import CLoader as Loader
-except:
+except ImportError:
     from yaml import Loader as Loader
 
 
@@ -19,12 +19,13 @@ def diff_dict(d1, d2):
 
         if val != d2[key]:
             diff.append(key)
-    
+
     return(diff)
+
 
 class TaskmasterDaemonParser:
     """TaskmasterDeamonParser class.
-    
+
     > See `supervisord`.
     """
 
@@ -34,15 +35,18 @@ class TaskmasterDaemonParser:
         if not os.path.exists(conf_path):
             print('Unknown file or directory %s.' % conf_path)
             sys.exit(-1)
-        
+
         try:
             with open(conf_path) as conf:
                 self.configuration = config = yaml.load(conf, Loader=Loader)
-        except:
+        except Exception:
             print('Unable to read configuration file %s' % conf_path)
 
-        if not 'programs' in config or len(config) > 1:
-            raise ValueError('config file is invalid')
+        if 'programs' not in config or len(config) > 1:
+            raise ValueError((
+                'config file is invalid, '
+                'bad indentation or "program" section not found.'
+            ))
 
     @classmethod
     def from_command_line(cls):
