@@ -93,7 +93,7 @@ _to be described_
     - [x] start/autostart tasks
     - [x] restart behaviors / policy
     - [x] timeouts (start / stop)
-    - [ ] STDOUT / STDERR
+    - [x] STDOUT / STDERR
     - [ ] env variables
     - [x] Handle `workingdir`
     - [ ] umask

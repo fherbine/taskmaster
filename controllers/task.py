@@ -10,6 +10,10 @@ from controllers.logger import Logger
 LOGLEVEL = getattr(logging, os.environ.get('LOGLEVEL', 'INFO'), logging.INFO)
 
 
+def _nop():
+    return
+
+
 def handle_process_restart_behavior(process, behavior, returncodes, callback):
     process.wait()
 
@@ -67,17 +71,46 @@ class Task:
         for key, value in env.items():
             self.env[key] = value
 
-        if 'stdout' in kwargs:
-            self.stdout = kwargs['stdout']
-
-        if 'stderr' in kwargs:
-            self.stderr = kwargs['stderr']
+        self.stdout = kwargs.get('stdout', '')
+        self.stderr = kwargs.get('stderr', '')
         
         if autostart:
             if self.is_running:
                 self.restart()
             else:
                 self.run()
+
+    def close_fds(self):
+        getattr(self.stdout, 'close', _nop)()
+        getattr(self.stderr, 'close', _nop)()
+
+    def reopen_stds(self):
+        if getattr(self.stdout, 'closed', True):
+            self.stdout = getattr(self.stdout, 'name', '')
+        if getattr(self.stderr, 'closed', True):
+            self.stderr = getattr(self.stderr, 'name', '')
+    
+    @property
+    def stdout(self):
+        return self._stdout
+
+    @stdout.setter
+    def stdout(self, path):
+        if not path:
+            self._stdout = subprocess.PIPE
+            return
+        self._stdout = open(path, 'w')
+    
+    @property
+    def stderr(self):
+        return self._stderr
+
+    @stderr.setter
+    def stderr(self, path):
+        if not path:
+            self._stderr = subprocess.PIPE
+            return
+        self._stderr = open(path, 'w')
     
     def _initchildproc(self):
         os.umask(self.umask)
@@ -110,6 +143,8 @@ class Task:
             self.log.warning('%s reached the maximum number of retries.' % self.name)
             return
         
+        self.reopen_stds()
+        
         self.log.info('Try to start {}. Retry attempt {}, max retries: {}, cmd: `{}`'.format(
             self.name,
             self.trynum,
@@ -121,8 +156,8 @@ class Task:
             for virtual_pid in range(self.numprocs):
                 process = subprocess.Popen(
                     self.cmd.split(),
-                    stderr=self.stderr if self.stderr else subprocess.PIPE,
-                    stdout=self.stdout if self.stdout else subprocess.PIPE,
+                    stderr=self.stderr,
+                    stdout=self.stdout,
                     env=self.env,
                     cwd=self.workingdir,
                     preexec_fn=self._initchildproc,
@@ -167,6 +202,7 @@ class Task:
     
     def stop(self, from_thread=False):
         self.stopping = True
+        self.close_fds()
 
         for process in self.processes:
             self.log.info(f'Send SIG{self.stopsignal} to {process.pid}.')
