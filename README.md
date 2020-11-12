@@ -96,7 +96,7 @@ _to be described_
     - [x] STDOUT / STDERR
     - [ ] env variables
     - [x] Handle `workingdir`
-    - [ ] umask
+    - [x] umask
 - [x] Handle CTLs commands
 
 #### Bonuses

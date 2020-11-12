@@ -50,14 +50,14 @@ class Task:
         
         self.log.info('task %s initialized.' % self.name)
 
-    def update(self, name, cmd, numprocs=1, umask=666, workingdir=os.getcwd(),
+    def update(self, name, cmd, numprocs=1, umask='666', workingdir=os.getcwd(),
                autostart=True, autorestart='unexpected', exitcodes=[0],
                startretries=2, starttime=5, stopsignal='TERM', stoptime=10,
                env={}, **kwargs):
         self.name = name
         self.cmd = cmd
         self.numprocs = numprocs
-        self.umask = umask if umask else '000'
+        self.umask = str(umask) if umask else '000'
         self.workingdir = workingdir
         self.autostart = autostart
         self.autorestart = autorestart
@@ -113,7 +113,7 @@ class Task:
         self._stderr = open(path, 'w')
     
     def _initchildproc(self):
-        os.umask(self.umask)
+        os.umask(int(self.umask, 8))
 
     def restart(self, retry=False, from_thread=False):
         if from_thread and self.stopping:
