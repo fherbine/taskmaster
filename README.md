@@ -65,11 +65,11 @@ programs:
 
 ## TaskmanagerCtl (CLI controller)
 
-_to be described_
+- To launch the command line controller you have to launch it with `py`
 
 ## CtlWeb (WebApp controller)
 
-_to be described_
+- To launch the CTL web version you have to go into ./ctlweb/ and use ```sh npm run start```. Make sure your taskmasterd is already running when you launch it so you can see the processes running.
 
 ***
 
