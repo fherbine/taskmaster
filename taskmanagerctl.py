@@ -59,7 +59,7 @@ while (1):
         except:
             print("http://localhost:9998 refused connection")
     elif 'restart' == line and args:
-        data = json.dumps({"command": "restart", "args": [args]}).encode('utf-8')
+        data = json.dumps({"command": "restart", "args": args}).encode('utf-8')
         req =  request.Request("http://localhost:9998", data=data, headers={
             'content-type': 'application/json'
         })
@@ -70,29 +70,31 @@ while (1):
         except:
             print("http://localhost:9998 refused connection")
     elif 'stop' == line and args:
-        data = json.dumps({"command": "stop", "args": [args]}).encode('utf-8')
+        print(args);
+        data = json.dumps({"command": "stop", "args": args}).encode('utf-8')
         req =  request.Request("http://localhost:9998", data=data, headers={
             'content-type': 'application/json'
         })
         try:
             resp = request.urlopen(req)
             status = json.loads(resp.read().decode())
-            print(status['task'] + ' ' + status['message'])
+            print(status['updated_tasks'])
         except:
             print("http://localhost:9998 refused connection")
     elif 'update' == line and not args:
-        print('status <name>           Get status for a single process\nGet status for all processes in a group\nstatus <name> <name>    Get status for multiple named processes\nstatus                  Get all process status info')
-    elif 'update' == line and args:
-        data = json.dumps({"command": "update", "args": args}).encode('utf-8')
+        data = json.dumps({"command": "update"}).encode('utf-8')
         req =  request.Request("http://localhost:9998", data=data, headers={
             'content-type': 'application/json'
         })
         try:
             resp = request.urlopen(req)
             status = json.loads(resp.read().decode())
+            print(status)
             print(items['task'] + ' ' + items['message'])
         except:
             print("http://localhost:9998 refused connection")
+    elif 'update' == line and args:
+        print('status <name>           Get status for a single process\nGet status for all processes in a group\nstatus <name> <name>    Get status for multiple named processes\nstatus                  Get all process status info')
     elif 'status' == line and not args:
         data = json.dumps({"command": "refresh"}).encode('utf-8')
         req =  request.Request("http://localhost:9998", data=data, headers={
@@ -120,4 +122,4 @@ while (1):
         except:
             print("http://localhost:9998 refused connection")
     else:
-        print('*** Unknown syntax: '+ str(tab))
+        print('*** Unknown syntax: ' + str(tab))
