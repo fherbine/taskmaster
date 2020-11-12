@@ -1,6 +1,7 @@
 import copy
 import logging
 import os
+import signal
 import sys
 
 from controllers.parser import (
@@ -37,8 +38,11 @@ if __name__ == '__main__':
         programs.append(task)
 
     logger.success('Tasks initialized.')
-
     manager = Manager(programs, parser)
+    signal.signal(signal.SIGHUP, lambda *_: manager.load_tcp_command(
+        {"command": "update"}
+    ))
+
     logger.info('Start server on `localhost:9998`')
     server = Server(manager)
     server.serve()

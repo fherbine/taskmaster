@@ -89,14 +89,15 @@ programs:
     - [x] Error/undefined values/undefined behavior management
     - [x] Default values
     - [x] Required values
-- [ ] Deamon task management
+- [x] Deamon task management
     - [x] start/autostart tasks
     - [x] restart behaviors / policy
     - [x] timeouts (start / stop)
     - [x] STDOUT / STDERR
-    - [ ] env variables
+    - [x] env variables
     - [x] Handle `workingdir`
     - [x] umask
+    - [x] SIGHUP to update config YAML
 - [x] Handle CTLs commands
 
 #### Bonuses
