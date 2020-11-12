@@ -73,8 +73,8 @@ class Manager:
                         ret['message'],
                     ), **ret))
 
-            if response and not with_refresh:
-                return response if len(response) > 1 else response[0]
+        if response and not with_refresh:
+            return response if len(response) > 1 else response[0]
 
         if command.upper() == 'UPDATE':
             ret = self.update()
