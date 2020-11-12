@@ -39,7 +39,7 @@ class Manager:
                 # not affected
                 continue
             elif program_name in programs_names:
-                # affected
+                # affected -- w/restart
                 program = self._get_program_by_name(program_name)
                 cmd = program_params.pop('cmd')
                 program.update(program_name, cmd, **program_params)
@@ -48,6 +48,14 @@ class Manager:
             cmd = program_params.pop('cmd')
             task = Task(program_name, cmd, **program_params)
             self.programs.append(task)
+            programs_names.remove(program_name)
+        
+        for program_name in programs_names:
+            if program_name not in diff:
+                continue
+
+            program = self._get_program_by_name(program_name)
+            program.stop()
         
         return {"raw_output": "Updated tasks %s" % diff, "updated_tasks": diff}
 
