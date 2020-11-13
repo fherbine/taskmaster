@@ -1,8 +1,9 @@
 .App {
   background-color: #282c34;
-  min-height: 100vh;
   display: flex;
   flex-direction: column;
+  padding: 5vw;
+  height: 100vh;
   align-items: center;
   justify-content: center;
   font-size: calc(10px + 2vmin);
@@ -10,12 +11,42 @@
 }
 
 .Tasks-Daemon-Button {
-  /* width: 50%; */
   display: flex;
   flex-direction: row;
   justify-content: space-evenly;
+  margin-bottom: 50px;
 }
 
 .Task-listgroup {
   color: black;
+  display: flex !important;
+  flex-direction: row;
+  justify-content: space-between;
+  border-bottom: 1px solid black !important;
+  align-items: center;
+}
+
+.taskName {
+  width: 10%;
+}
+
+.uptimeTask {
+  width: 10%;
+}
+
+.pidsTask {
+  width: 60%;
+}
+
+.App-header {
+  margin-bottom: 50px;
+}
+
+.pids {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.buttonTask {
+  width: 20%;
 }

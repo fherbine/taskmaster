@@ -38,9 +38,7 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <p>
           Welcome to TASKMASTER
-        </p>
       </header>
       <div className="Tasks-Panel">
         <div className="Tasks-Daemon-Button">
@@ -48,20 +46,35 @@ function App() {
           <Button variant="outline-primary" onClick={(e) => handleClick("config", "update")}>Update configuration file</Button>
         </div>
         <ListGroup>
-          <h3 style={{ color: "#31E981" }}>
-            Processes
+          <h3>
+            Processes Name | Uptime | Attached pids
           </h3>
             {items &&
               items.map(item => {
                 return (
                   <ListGroup.Item className="Task-listgroup">
-                    {item.task} | {item.uptime} <br />
-                    Attached PIDS {item.pids.map((pid) => {
-                      return (<p style={{"display": "inline-block"}}>|{pid}|</p>);
-                    })} <br />
-                    <Button variant="outline-primary" onClick={(e) => handleClick(item.task, "start")}>Start</Button>
-                    <Button variant="outline-primary" onClick={(e) => handleClick(item.task, "restart")}>Restart</Button>
-                    <Button variant="outline-primary" onClick={(e) => handleClick(item.task, "stop")}>Stop</Button>
+                    <div className="taskName">
+                      {item.task}
+                    </div>
+                    <div className="uptimeTask">
+                      {item.uptime}
+                    </div>
+                    <div className="pidsTask">
+                      <div className="pids">
+                        {item.pids.map((pid) => {
+                          return (
+                            <div style={{"marginRight": "10px"}}>
+                              <p style={{"display": "inline-block", "marginBottom": "0"}}>{pid}</p>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                    <div className="buttonsTask">
+                      <Button variant="outline-primary" onClick={(e) => handleClick(item.task, "start")}>Start</Button>
+                      <Button variant="outline-primary" onClick={(e) => handleClick(item.task, "restart")}>Restart</Button>
+                      <Button variant="outline-primary" onClick={(e) => handleClick(item.task, "stop")}>Stop</Button>
+                    </div>
                   </ListGroup.Item>
                 );
               })}

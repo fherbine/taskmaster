@@ -4,22 +4,22 @@ from urllib import request, parse
 import json
 
 data = json.dumps({"command":"refresh"}).encode('utf-8')
-req =  request.Request("http://localhost:9998", data=data, headers={
+req = request.Request("http://localhost:9998", data=data, headers={
     'content-type': 'application/json'
 })
 try:
     resp = request.urlopen(req)
     status = json.loads(resp.read().decode())
     for items in status:
-        print(items["task"] + ' ' + items["uptime"] + ' ' + str(items["started_processes"]) + ' ' + str(items["pids"]))
+        print(items["task"],items["uptime"], str(items["started_processes"]), str(items["pids"]))
 except:
-    print("http://localhost:9998 refused connection")
     raise
+    print("http://localhost:9998 refused connection")
 
 def print_data(data):
     print(data);
     # for items in data:
-    #     print(items["task"] + ' ' + items["uptime"] + ' ' + str(items["started_processes"]) + ' ' + str(items["pids"]))
+    #     print(items["task"],items["uptime"],str(items["started_processes"]),str(items["pids"]))
 
 
 while (1):
@@ -49,30 +49,66 @@ while (1):
         print('start <name>            Start a process\nstart <name> <name>     Start multiple processes or groups\nstart all               Start all processes')
     elif 'start' == line and args:
         data = json.dumps({"command": "start", "args": args}).encode('utf-8')
-        req =  request.Request("http://localhost:9998", data=data, headers={
+        req = request.Request("http://localhost:9998", data=data, headers={
             'content-type': 'application/json'
         })
         try:
             resp = request.urlopen(req)
             status = json.loads(resp.read().decode())
-            print(status['task'] + ' ' + status['message'])
+            if isinstance(status, dict) and status.get("error"):
+                print(status["input_request"]["args"], ' ', status["message"])
+            else:
+                if isinstance(status, list):
+                    for items in status:
+                        print(items['task'], items['message'])
+                else:
+                    print(status['task'], status['message'])
         except:
+            raise
             print("http://localhost:9998 refused connection")
     elif 'restart' == line and args:
         data = json.dumps({"command": "restart", "args": args}).encode('utf-8')
-        req =  request.Request("http://localhost:9998", data=data, headers={
+        req = request.Request("http://localhost:9998", data=data, headers={
             'content-type': 'application/json'
         })
         try:
             resp = request.urlopen(req)
             status = json.loads(resp.read().decode())
-            print(status['task'] + ' ' + status['message'])
+            if isinstance(status, dict) and status.get("error"):
+                print(status["input_request"]["args"], ' ', status["message"])
+            else:
+                if isinstance(status, list):
+                    for items in status:
+                        print(items['task'], items['message'])
+                else:
+                    print(status['task'], status['message'])
         except:
             print("http://localhost:9998 refused connection")
+    elif 'restart' == line and not args:
+        print('restart <name>          Restart a process\nrestart <name> <name>   Restart multiple processes or groups\nrestart all             Restart all processes\nNote: restart does not reread config files. For that, see reread and update.')
+    elif 'stop' == line and not args:
+        print('stop <name>             Stop a process\nStop all processes in a group\nstop <name> <name>      Stop multiple processes or groups\nstop all                Stop all processes')
     elif 'stop' == line and args:
-        print(args);
         data = json.dumps({"command": "stop", "args": args}).encode('utf-8')
-        req =  request.Request("http://localhost:9998", data=data, headers={
+        req = request.Request("http://localhost:9998", data=data, headers={
+            'content-type': 'application/json'
+        })
+        try:
+            resp = request.urlopen(req)
+            status = json.loads(resp.read().decode())
+            if isinstance(status, dict) and status.get("error"):
+                print(status["input_request"]["args"], ' ', status["message"])
+            else:
+                if isinstance(status, list):
+                    for items in status:
+                        print(items['task'], items['message'])
+                else:
+                    print(status['task'], status['message'])
+        except:
+            print("http://localhost:9998 refused connection")
+    elif 'stop_daemon' == line and not args:
+        data = json.dumps({"command": "stop_daemon"}).encode('utf-8')
+        req = request.Request("http://localhost:9998", data=data, headers={
             'content-type': 'application/json'
         })
         try:
@@ -83,33 +119,33 @@ while (1):
             print("http://localhost:9998 refused connection")
     elif 'update' == line and not args:
         data = json.dumps({"command": "update"}).encode('utf-8')
-        req =  request.Request("http://localhost:9998", data=data, headers={
+        req = request.Request("http://localhost:9998", data=data, headers={
             'content-type': 'application/json'
         })
         try:
             resp = request.urlopen(req)
             status = json.loads(resp.read().decode())
             print(status)
-            print(items['task'] + ' ' + items['message'])
+            print(items['task'], items['message'])
         except:
             print("http://localhost:9998 refused connection")
     elif 'update' == line and args:
         print('status <name>           Get status for a single process\nGet status for all processes in a group\nstatus <name> <name>    Get status for multiple named processes\nstatus                  Get all process status info')
     elif 'status' == line and not args:
         data = json.dumps({"command": "refresh"}).encode('utf-8')
-        req =  request.Request("http://localhost:9998", data=data, headers={
+        req = request.Request("http://localhost:9998", data=data, headers={
             'content-type': 'application/json'
         })
         try:
             resp = request.urlopen(req)
             status = json.loads(resp.read().decode())
             for items in status:
-                print(items["task"] + ' ' + items["uptime"] + ' ' + str(items["started_processes"]) + ' ' + str(items["pids"]))
+                print(items["task"], items["uptime"], str(items["started_processes"]), str(items["pids"]))
         except:
             print("http://localhost:9998 refused connection")
     elif 'status' == line and args:
         data = json.dumps({"command": "refresh"}).encode('utf-8')
-        req =  request.Request("http://localhost:9998", data=data, headers={
+        req = request.Request("http://localhost:9998", data=data, headers={
             'content-type': 'application/json'
         })
         try:
@@ -118,7 +154,7 @@ while (1):
             for items in status:
                 for argname in args:
                     if (items["task"] == argname):
-                        print(items["task"] + ' ' + items["uptime"] + ' ' + str(items["started_processes"]) + ' ' + str(items["pids"]))
+                        print(items["task"], items["uptime"], str(items["started_processes"]), str(items["pids"]))
         except:
             print("http://localhost:9998 refused connection")
     else:
