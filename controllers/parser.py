@@ -102,6 +102,15 @@ def diff_dict(d1, d2):
         if val != d2[key]:
             diff.append(key)
 
+    for key, val in d2.items():
+        if key not in d1 and key not in diff:
+            diff.append(key)
+            continue
+
+        if val != d1[key] and key not in diff:
+            diff.append(key)
+
+
     return(diff)
 
 
