@@ -45,6 +45,14 @@ if __name__ == '__main__':
 
     logger.info('Start server on `localhost:9998`')
     server = Server(manager)
-    server.serve()
+    try:
+        server.serve()
+    except OSError as e:
+        if e.errno == 98:
+            logger.error('Address *:9998 already in use.')
+        else:
+            raise
+    except Exception:
+        raise
 
     manager.stop_all()
