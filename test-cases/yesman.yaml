@@ -8,4 +8,4 @@ programs:
     startretries: 1
     stopsignal: KILL
     stoptime: 1
-    exicodes: -15
+    exitcodes: -15

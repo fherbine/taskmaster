@@ -1,0 +1,16 @@
+programs:
+  env:
+    cmd: "env"
+    env:
+      ANSWER: 42
+      ENTRYPOINT: Piscine
+    stdout: /tmp/env.log
+  
+  all_exit_codes:
+    cmd: "yes"
+    exitcodes: "*"
+  
+  expected_error:
+    cmd: "cat unknown"
+    stderr: /tmp/cat.err.log
+    startretries: 4
