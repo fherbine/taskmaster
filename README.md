@@ -109,3 +109,4 @@ programs:
 - [ ] Enhanced log system.
 - [ ] Attach / Detach processes
 - [ ] unittests
+- [x] Wildcard for exicodes
