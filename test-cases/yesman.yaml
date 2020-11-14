@@ -1,0 +1,11 @@
+# Jim always say yes
+
+programs:
+
+  Jim:
+    cmd: "yes"
+    autorestart: always
+    startretries: 1
+    stopsignal: KILL
+    stoptime: 1
+    exicodes: -15

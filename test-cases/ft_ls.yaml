@@ -1,0 +1,16 @@
+# bunch of ls processes
+
+programs:
+  ls_regular:
+    cmd: ls
+    numprocs: 3
+    workingdir: /tmp
+    autostart: false
+    autorestart: never
+    starttime: 0
+    stoptime: 2
+    stopsignal: USR1
+  
+  ls_root:
+    cmd: "ls -R /"
+    numprocs: 2
