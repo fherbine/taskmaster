@@ -1,3 +1,4 @@
+import copy
 import logging
 import os
 
@@ -38,7 +39,8 @@ class Manager:
         parser = self.parser
         programs_names = [program.name for program in self.programs]
 
-        for program_name, program_params in parser.configuration.get('programs', {}).items():
+        for program_name, _program_params in parser.configuration.get('programs', {}).items():
+            program_params = copy.deepcopy(_program_params)
             if program_name in programs_names and program_name not in diff:
                 # not affected
                 continue
