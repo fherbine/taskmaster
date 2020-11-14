@@ -26,6 +26,11 @@ class Manager:
             if program.name == name:
                 return program
 
+    def _remove_program_by_name(self, name):
+        for program in self.programs:
+            if program.name == name:
+                self.programs.remove(program)
+
     def update(self):
         self.log.info('Received update command.')
         diff = self.parser.refresh()
@@ -57,6 +62,7 @@ class Manager:
 
             program = self._get_program_by_name(program_name)
             program.stop()
+            self._remove_program_by_name(program_name)
         
         return {"raw_output": "Updated tasks %s" % diff, "updated_tasks": diff}
 
@@ -65,6 +71,12 @@ class Manager:
         args = request.get('args', list())
         with_refresh = request.get('with_refresh', False)
         response = []
+
+        if command.upper() == 'UPDATE':
+            ret = self.update()
+
+            if not with_refresh:
+                return ret
         
         for program in self.programs:
             if program.name in args:
@@ -84,12 +96,6 @@ class Manager:
 
         if response and not with_refresh:
             return response if len(response) > 1 else response[0]
-
-        if command.upper() == 'UPDATE':
-            ret = self.update()
-
-            if not with_refresh:
-                return ret
         
         if command.upper() == 'REFRESH' or with_refresh:
             if args:
