@@ -13,14 +13,7 @@ try:
     for items in status:
         print(items["task"],items["uptime"], str(items["started_processes"]), str(items["pids"]))
 except:
-    raise
     print("http://localhost:9998 refused connection")
-
-def print_data(data):
-    print(data);
-    # for items in data:
-    #     print(items["task"],items["uptime"],str(items["started_processes"]),str(items["pids"]))
-
 
 while (1):
     print('taskmaster> ', end="")
@@ -64,7 +57,6 @@ while (1):
                 else:
                     print(status['task'], status['message'])
         except:
-            raise
             print("http://localhost:9998 refused connection")
     elif 'restart' == line and args:
         data = json.dumps({"command": "restart", "args": args}).encode('utf-8')
