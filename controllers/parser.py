@@ -49,7 +49,8 @@ def _umask_checker(umask, *_):
 
 
 def _path_checker(path, *_):
-    return (True, '') if os.path.exists(path) else (False, 'Cannot find %s' % path)
+    dirpath = os.path.dirname(os.path.abspath(path))
+    return (True, '') if os.path.exists(dirpath) else (False, 'Cannot find %s' % path)
 
 
 def _to_list(item):
@@ -60,6 +61,12 @@ def _to_list(item):
 
 def _no_check(*args):
     return True, ''
+
+
+def _create_path_if_not_exitsts(path):
+    if not os.path.exists(path):
+        with open(path, 'w'): pass
+    return path
 
 
 CONFIGURATION_MAPPING = {
@@ -79,8 +86,8 @@ CONFIGURATION_MAPPING = {
         'VTALRM', 'PROF', 'XCPU', 'XFSZ', 'WAITING', 'LWP', 'AIO'
     )},
     "stoptime": {"expected_type": int, "handler": _int_checker, "args": (0, 20)},
-    "stdout": {"expected_type": str, "handler": _path_checker},
-    "stderr": {"expected_type": str, "handler": _path_checker},
+    "stdout": {"expected_type": str, "handler": _path_checker, "transform": _create_path_if_not_exitsts},
+    "stderr": {"expected_type": str, "handler": _path_checker, "transform": _create_path_if_not_exitsts},
     "env": {"expected_type": dict},
 }
 
@@ -109,7 +116,6 @@ def diff_dict(d1, d2):
 
         if val != d1[key] and key not in diff:
             diff.append(key)
-
 
     return(diff)
 
