@@ -1,6 +1,5 @@
 import logging
 import os
-import sys
 
 from controllers.logger import Logger
 from controllers.task import Task
