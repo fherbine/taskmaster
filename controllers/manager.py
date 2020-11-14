@@ -109,7 +109,7 @@ class Manager:
         
         if command.upper() == 'STOP_DAEMON':
             self.stop_all()
-            sys.exit(0)
+            raise Exception
         
         return {
             'raw_output': '%s: ERROR (no such command)' % command,
