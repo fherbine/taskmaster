@@ -32,7 +32,7 @@ function App() {
     console.log(itemName, command);
     const requestOptions = {
       method: 'POST',
-      body: JSON.stringify({ command, "args": command === "stop_daemon" ? [] : [itemName], "with_refresh": command === "stop_daemon" ? false : true })
+      body: JSON.stringify({ command, "args": (command === "stop_daemon" || command === "update") ? [] : [itemName], "with_refresh": command === "stop_daemon"? false : true })
     };
     fetch('http://localhost:9998/', requestOptions)
       .then(response => {
