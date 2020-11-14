@@ -69,7 +69,7 @@ class Task:
         self.env = os.environ
         
         for key, value in env.items():
-            self.env[key] = value
+            self.env[key] = str(value)
 
         self.stdout = kwargs.get('stdout', '')
         self.stderr = kwargs.get('stderr', '')
