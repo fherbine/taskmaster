@@ -79,10 +79,10 @@ programs:
 
 #### Mandatory
 
-- [ ] CTLs status command
-- [ ] CTLs stop/start/restart commands
-- [ ] CTLs upload command
-- [ ] CTLs stop deamon command
+- [x] CTLs status command
+- [x] CTLs stop/start/restart commands
+- [x] CTLs upload command
+- [x] CTLs stop_deamon command
 
 - [x] YAML parser
     - [x] read YAML file from command line

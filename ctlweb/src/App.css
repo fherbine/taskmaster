@@ -17,6 +17,10 @@
   margin-bottom: 50px;
 }
 
+.Tasks-Panel {
+  width: 80%;
+}
+
 .Task-listgroup {
   color: black;
   display: flex !important;

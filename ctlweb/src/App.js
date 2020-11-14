@@ -12,12 +12,20 @@ function App() {
       method: 'POST',
       body: JSON.stringify({ "command": "refresh"})
     };
-    fetch("http://localhost:9998/", requestOptionsGet)
+      fetch("http://localhost:9998/", requestOptionsGet)
       .then(res => res.json().then((result) => {
         setItems(result);
         console.log(items);
+        })
+      )
+      .catch((error) => {
+        console.log("error", error)
+        setItems([{
+          task: "unable to make connection",
+          uptime: ' ',
+          pids: [' ']
+        }])
       })
-    )
   }, [])
 
   const handleClick = (itemName, command) => {
@@ -27,11 +35,19 @@ function App() {
       body: JSON.stringify({ command, "args": command === "stop_daemon" ? [] : [itemName], "with_refresh": command === "stop_daemon" ? false : true })
     };
     fetch('http://localhost:9998/', requestOptions)
-        .then(response => {
-          response.json().then((data) => {
-            setItems(data);
-          })
+      .then(response => {
+        response.json().then((data) => {
+          setItems(data);
         })
+      })
+      .catch((error) => {
+        console.log("error", error)
+        setItems([{
+          task: "unable to make connection",
+          uptime: ' ',
+          pids: [' ']
+        }])
+      })
     }
   
 
