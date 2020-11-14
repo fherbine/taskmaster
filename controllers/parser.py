@@ -69,6 +69,16 @@ def _create_path_if_not_exitsts(path):
     return path
 
 
+def _exitcodes_checker(exitcodes, *_):
+    if isinstance(exitcodes, list) or isinstance(exitcodes, tuple):
+        for item in exitcodes:
+            if not isinstance(item, int) and item != '*':
+                return False, 'Unexpected exitcode %s' % item
+    elif not isinstance(exitcodes, int) and exitcodes != '*':
+        return False, 'Unexpected exitcode %s' % exitcodes
+    return True, ''
+
+
 CONFIGURATION_MAPPING = {
     "cmd": {"expected_type": str, "handler": _command_checker},
     "numprocs": {"expected_type": int, "handler": _int_checker, "args": (1, 20)},
@@ -76,7 +86,7 @@ CONFIGURATION_MAPPING = {
     "workingdir": {"expected_type": str, "handler": _path_checker},
     "autostart": {"expected_type": bool},
     "autorestart": {"expected_type": str, "handler": _str_checker, "args": ('ALWAYS', 'NEVER', 'UNEXPECTED')},
-    "exitcodes": {"expected_type": (int, list, tuple), "transform": _to_list},
+    "exitcodes": {"expected_type": (int, list, tuple, str), "handler": _exitcodes_checker, "transform": _to_list},
     "startretries": {"expected_type": int, "handler": _int_checker, "args": (1, 100)},
     "starttime": {"expected_type": int, "handler": _int_checker, "args": (0, 3600)},
     "stopsignal": {"expected_type": str, "handler": _str_checker, "args": (

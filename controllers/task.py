@@ -25,7 +25,7 @@ def handle_process_restart_behavior(process, behavior, returncodes, callback):
 
     if behavior.upper() == 'ALWAYS' or (
         behavior.upper() == 'UNEXPECTED'
-        and process.returncode not in returncodes
+        and process.returncode not in returncodes and '*' not in returncodes
     ):
         try:
             callback()
