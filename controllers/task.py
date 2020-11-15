@@ -35,7 +35,7 @@ def handle_process_restart_behavior(process, behavior, returncodes, callback):
             # XXX: Hack
             return
 
-    Logger(level=LOGLEVEL).info(f'{process.pid} killed w/signal {process.returncode}')
+    Logger(level=LOGLEVEL).debug(f'{process.pid} killed w/signal {process.returncode}')
 
 
 class Task:
