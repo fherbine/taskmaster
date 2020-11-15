@@ -40,6 +40,7 @@ class Manager:
         self.log.info('Affected/new tasks: %s.' % diff)
         parser = self.parser
         programs_names = [program.name for program in self.programs]
+        affected = list()
 
         for program_name, _program_params in parser.configuration.get('programs', {}).items():
             program_params = copy.deepcopy(_program_params)
@@ -48,6 +49,7 @@ class Manager:
                 continue
             elif program_name in programs_names:
                 # affected -- w/restart
+                affected.append(program_name)
                 program = self._get_program_by_name(program_name)
                 cmd = program_params.pop('cmd')
                 program.update(program_name, cmd, **program_params)
@@ -61,7 +63,7 @@ class Manager:
                 programs_names.remove(program_name)
         
         for program_name in programs_names:
-            if program_name not in diff:
+            if program_name not in diff or program_name in affected:
                 continue
 
             program = self._get_program_by_name(program_name)
