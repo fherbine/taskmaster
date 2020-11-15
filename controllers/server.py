@@ -1,14 +1,27 @@
+import logging
 import os
 import signal
 import json
 
 from waitress import serve
 
+from controllers.logger import Logger
+
+LOGLEVEL = getattr(logging, os.environ.get('LOGLEVEL', 'INFO'), logging.INFO)
+
 
 class Server:
     def __init__(self, manager):
         self.manager = manager
         self.lock = False
+        self.log = Logger(level=LOGLEVEL)
+        signal.signal(signal.SIGINT, self._handle_kb_interrupt)
+
+    def _handle_kb_interrupt(self, *_):
+        # XXX: hack
+        self.log.warning('Ctrl+C, quitting program.')
+        self.manager.stop_all()
+        raise KeyboardInterrupt
 
     def application(self, environ, start_response):
         while self.lock:
@@ -28,11 +41,7 @@ class Server:
 
         request_body = environ['wsgi.input'].read(request_body_size)
         data = json.loads(request_body)
-        try:
-            ret = self.manager.load_tcp_command(data)
-        except Exception:
-            # XXX: Hack
-            os.kill(os.getpid(), signal.SIGKILL)
+        ret = self.manager.load_tcp_command(data)
 
         self.lock = False
         return [json.dumps(ret).encode()]

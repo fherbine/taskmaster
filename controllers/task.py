@@ -28,6 +28,7 @@ def handle_process_restart_behavior(process, behavior, returncodes, callback):
         and process.returncode not in returncodes and '*' not in returncodes
     ):
         try:
+            Logger(level=LOGLEVEL).debug('calling callback %s' % callback.__name__)
             callback()
         except Exception:
             # XXX: Hack
@@ -122,14 +123,14 @@ class Task:
         self.stop(from_thread)
         self.run(retry=retry)
 
-    def define_restart_policy(self, process):
+    def define_restart_policy(self, process, retry=False):
         thr = threading.Thread(
             target=handle_process_restart_behavior,
             args=(
                 process,
                 self.autorestart,
                 self.exitcodes,
-                lambda *_: self.restart(retry=True, from_thread=True),
+                lambda *_: self.restart(retry=retry, from_thread=True),
             ),
             daemon=True,
         )

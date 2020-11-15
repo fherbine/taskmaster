@@ -55,7 +55,7 @@ if __name__ == '__main__':
             logger.error('Address *:9998 already in use.')
         else:
             raise
-    except Exception:
-        raise
+    except KeyboardInterrupt:
+        sys.exit(-1)
 
     manager.stop_all()
