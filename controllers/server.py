@@ -8,8 +8,13 @@ from waitress import serve
 class Server:
     def __init__(self, manager):
         self.manager = manager
+        self.lock = False
 
     def application(self, environ, start_response):
+        while self.lock:
+            pass
+
+        self.lock = True
         try:
             request_body_size = int(environ.get('CONTENT_LENGTH', 0))
         except (ValueError):
@@ -28,6 +33,8 @@ class Server:
         except Exception:
             # XXX: Hack
             os.kill(os.getpid(), signal.SIGKILL)
+
+        self.lock = False
         return [json.dumps(ret).encode()]
 
     def serve(self):
