@@ -30,9 +30,12 @@ def handle_process_restart_behavior(process, behavior, returncodes, callback):
         try:
             Logger(level=LOGLEVEL).debug('calling callback %s' % callback.__name__)
             callback()
+            return
         except Exception:
             # XXX: Hack
             return
+
+    Logger(level=LOGLEVEL).info(f'{process.pid} killed w/signal {process.returncode}')
 
 
 class Task:
@@ -230,6 +233,14 @@ class Task:
 
     @property
     def uptime(self):
+        for p in self.processes:
+            if p.returncode is not None:
+                if p.returncode in self.exitcodes:
+                    self.start_time = -2
+                else:
+                    self.start_time = -3
+                break
+
         if self.start_time == -1:
             return 'not started'
         if self.start_time == -2:
