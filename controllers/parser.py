@@ -111,21 +111,22 @@ class ParseError(Exception):
 def diff_dict(d1, d2):
     diff = list()
 
-    for key, val in d1.items():
-        if key not in d2:
-            diff.append(key)
-            continue
+    if d1:
+        for key, val in d1.items():
+            if key not in d2:
+                diff.append(key)
+                continue
 
-        if val != d2[key]:
-            diff.append(key)
+            if val != d2[key]:
+                diff.append(key)
+    if d2:
+        for key, val in d2.items():
+            if key not in d1 and key not in diff:
+                diff.append(key)
+                continue
 
-    for key, val in d2.items():
-        if key not in d1 and key not in diff:
-            diff.append(key)
-            continue
-
-        if val != d1[key] and key not in diff:
-            diff.append(key)
+            if val != d1[key] and key not in diff:
+                diff.append(key)
 
     return(diff)
 
@@ -142,7 +143,8 @@ class TaskmasterDaemonParser:
         self.log = Logger(LOGLEVEL)
 
         if not os.path.exists(conf_path):
-            print('Unknown file or directory %s.' % conf_path)
+            print("")
+            self.log.error('Unknown file or directory %s.' % conf_path)
             sys.exit(-1)
 
         try:
@@ -186,6 +188,11 @@ class TaskmasterDaemonParser:
     
     def check_configuration(self):
         programs = self.configuration.get('programs', {})
+
+        if not programs:
+            self.configuration['programs'] = dict()
+            self.log.warning('Any programs to be loaded')
+            return
 
         for program_name, parameters in programs.items():
 

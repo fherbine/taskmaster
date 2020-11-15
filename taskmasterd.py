@@ -31,11 +31,12 @@ if __name__ == '__main__':
         logger.debug('Configuration retrieved: %s' % parser.configuration)
         programs = list()
 
-        for program_name, program_params in parser.configuration.get('programs', {}).items():
-            params = copy.deepcopy(program_params)
-            cmd = params.pop('cmd')
-            task = Task(program_name, cmd, **params)
-            programs.append(task)
+        if parser.configuration.get('programs', {}):
+            for program_name, program_params in parser.configuration.get('programs', {}).items():
+                params = copy.deepcopy(program_params)
+                cmd = params.pop('cmd')
+                task = Task(program_name, cmd, **params)
+                programs.append(task)
 
         logger.success('Tasks initialized.')
         manager = Manager(programs, parser)

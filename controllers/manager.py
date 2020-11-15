@@ -42,25 +42,26 @@ class Manager:
         programs_names = [program.name for program in self.programs]
         affected = list()
 
-        for program_name, _program_params in parser.configuration.get('programs', {}).items():
-            program_params = copy.deepcopy(_program_params)
-            if program_name in programs_names and program_name not in diff:
-                # not affected
-                continue
-            elif program_name in programs_names:
-                # affected -- w/restart
-                affected.append(program_name)
-                program = self._get_program_by_name(program_name)
+        if parser.configuration.get('programs', {}):
+            for program_name, _program_params in parser.configuration.get('programs', {}).items():
+                program_params = copy.deepcopy(_program_params)
+                if program_name in programs_names and program_name not in diff:
+                    # not affected
+                    continue
+                elif program_name in programs_names:
+                    # affected -- w/restart
+                    affected.append(program_name)
+                    program = self._get_program_by_name(program_name)
+                    cmd = program_params.pop('cmd')
+                    program.update(program_name, cmd, **program_params)
+                    continue
+                # start affected/new programs
                 cmd = program_params.pop('cmd')
-                program.update(program_name, cmd, **program_params)
-                continue
-            # start affected/new programs
-            cmd = program_params.pop('cmd')
-            task = Task(program_name, cmd, **program_params)
-            self.programs.append(task)
+                task = Task(program_name, cmd, **program_params)
+                self.programs.append(task)
 
-            if program_name in programs_names:
-                programs_names.remove(program_name)
+                if program_name in programs_names:
+                    programs_names.remove(program_name)
         
         for program_name in programs_names:
             if program_name not in diff or program_name in affected:
