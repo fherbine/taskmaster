@@ -198,6 +198,7 @@ class Task:
                         continue
 
                     # retry
+                    self.log.info(f'Unexpected returncode {process.returncode}')
                     self.restart(retry=True)
         except Exception:
             # retry
