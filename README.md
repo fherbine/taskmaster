@@ -34,6 +34,13 @@ $ source ./env/bin/activate
 $ python3.8 ./taskmasterd -c /path/to/your/config.yaml
 ```
 
+### Change log level
+
+Before running you can change the log level by typing the following command:
+```sh
+$ export LOGLEVEL=[ERROR|WARNING|INFO(default)|DEBUG]
+```
+
 ### About configuration
 
 > Configuration file format is given in the [subject](./fr.subject.pdf).
