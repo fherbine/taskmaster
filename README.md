@@ -1,4 +1,4 @@
-# taskmaster
+# taskmaster @42
 
 A 42 project whis is a basic reproduction of supervisor, which is a task manager.
 Final grade: **125/100**
