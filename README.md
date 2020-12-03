@@ -11,7 +11,7 @@ A basic reproduction of supervisor, which is a task manager.
 
 #### With virtual env (RECOMMENDED)
 ```sh
-$ python3.8 -m venv .
+$ python3.8 -m venv ./env
 $ source ./env/bin/activate
 (env) $ pip install -r requirements.txt
 ```
