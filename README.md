@@ -1,6 +1,7 @@
 # taskmaster
 
-A basic reproduction of supervisor, which is a task manager.
+A 42 project whis is a basic reproduction of supervisor, which is a task manager.
+Final grade: **125/100**
 
 > [Project introduction](https://docs.google.com/presentation/d/1LcZcP-kSzcBjE6d3_cHoFy3v_VbIdg4a8T83Fyj7EQY/edit?usp=sharing) (slides)
 
