@@ -61,6 +61,8 @@ programs:
         stopsignal: <UNIX default termination signal> # type str, default is 'TERM'
         stoptime: <timeout for task after the task should be stopped with a stopsignal> # type int, default is 10
         env: <env variables to add to launch the task> # type dict, by default there isn't any added variables.
+        stdout: <path to redirect STDOUT> # By default STDOUT is not redirected
+        stderr: <path to redirect STDERR> # By default STDERR is not redirected
     <task_name2>:
         # And so on ...
 ```
